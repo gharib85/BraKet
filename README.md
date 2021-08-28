@@ -4,7 +4,7 @@ A Mathematica package to do simple quantum information calculations symbolically
 See the accompanying manual `BraKet.nb` for a more in-depth explanation. 
 
 ## Basic Notation
-We can enter bra's and ket's using the built-in functions of Mathematica: `Ket[]` and `Bra[]`, or equivalently `esc ket esc` or `esc bra esc`
+We can enter bras and kets using the built-in functions of Mathematica: `Ket[]` and `Bra[]`, or equivalently `esc ket esc` or `esc bra esc`
 ```Mathematica
   psi = Ket[0]
 ```
@@ -27,7 +27,7 @@ Operators can be built by summing and taking tensor product of terms of form
 ```
 For example
 ```Mathematica
-  pauliX = Ket[0] \[CenterDot] Bra[1]+Ket[1] \[CenterDot] Bra[0]
+pauliX = Ket[0] \[CenterDot] Bra[1] + Ket[1] \[CenterDot] Bra[0]
 ```
 We can act on states by using again `CenterDot[]`
 ```Mathematica
