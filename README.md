@@ -1,7 +1,7 @@
 # BraKet
 A Mathematica package to do simple quantum information calculations symbolically.
 
-See the accompanying manual `BraKet.nb` for a more in-depth explanation. 
+See the accompanying manual `BraKet_manual.nb` for a more in-depth explanation. 
 
 ## Basic Notation
 We can enter bras and kets using the built-in functions of Mathematica: `Ket[]` and `Bra[]`, or equivalently `esc ket esc` or `esc bra esc`
