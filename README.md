@@ -41,6 +41,7 @@ The package implements some basic quantum information operations and quantities:
 - Bell states
 - Pauli matrices
 - Identity for n qudits
-and some simple operations
+
+And some simple operations:
 - Partial trace
 - Von Neumann entropy
