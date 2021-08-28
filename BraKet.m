@@ -20,7 +20,7 @@
 
 
 (* ::Input::Initialization:: *)
-(* A Mathematica package to do simple quantum information calculatin symbolically by A. F. Rotundo. *)
+(* A Mathematica package to do simple quantum information calculations symbolically (https://github.com/af-rotundo/BraKet). *)
 
 
 (* ::Input::Initialization:: *)
@@ -49,9 +49,6 @@ B11::usage="Bell state: \!\(\*TemplateBox[{\"01\"},\n\"Ket\"]\)-\!\(\*TemplateBo
 
 StateNorm::usage = "StateNorm[\!\(\*TemplateBox[{\"\[Psi]\"},\n\"Ket\"]\)] computes the norm of \!\(\*TemplateBox[{\"\[Psi]\"},\n\"Ket\"]\).";
 DensityNorm::usage = "DensityNorm[\[Rho]] computes the norm of \[Rho].";
-(* seems redundant
-TraceOp::usage = "TraceOp[Op] computes the trace of Op.";
-*)
 PartialTrace::usage = "PartialTrace[\[Rho], list] traces \[Rho] over the tensor factors in the list.";
 EntropyVN::usage = "DensityNorm[\[Rho]] computes the von Neumann entropy of \[Rho].";
 EntropyVN::usage = "DensityNorm[\[Rho]] computes the von Neumann entropy of the density matrix.";
@@ -110,13 +107,6 @@ CenterDot/:CenterDot[CircleTimes[x__Bra],CircleTimes[y__Ket]]:=CircleTimes@@MapT
 CenterDot[x_CenterDot,y_CenterDot]:=CenterDot[x[[2]],y[[1]]]CenterDot[x[[1]],y[[2]]];
 CenterDot[x_CenterDot,y_]:=CenterDot[x[[2]],y]x[[1]]/;MemberQ[{CircleTimes,Ket},Head[y]];
 CenterDot[x_,y_CenterDot]:=CenterDot[x,y[[1]]]y[[2]]/;MemberQ[{CircleTimes,Bra},Head[x]];
-(* Product between operators *)
-(*CenterDot/:CenterDot[CenterDot[x_Ket,y_Bra],CenterDot[z_Ket,t_Bra]]:=CenterDot[y,z]CenterDot[x,t];
-CenterDot/:CenterDot[CenterDot[CircleTimes[x__Ket],CircleTimes[y__Bra]],CenterDot[CircleTimes[z__Ket],CircleTimes[t__Bra]]]:=CenterDot[CircleTimes[y],CircleTimes[z]] CenterDot[CircleTimes[x],CircleTimes[t]];
-CenterDot/:CenterDot[CenterDot[x_Ket,CircleTimes[y__Bra]],CenterDot[CircleTimes[z__Ket],t_Bra]]:=CenterDot[CircleTimes[y],CircleTimes[z]] CenterDot[x,t];
-CenterDot/:CenterDot[CenterDot[CircleTimes[x__Ket],y_Bra],CenterDot[z_Ket,CircleTimes[t__Bra]]]:=CenterDot[y,z]CenterDot[CircleTimes[x],CircleTimes[t]] ;
-CenterDot/:CenterDot[CenterDot[CircleTimes[x__Ket],CircleTimes[y__Bra]],CircleTimes[z__Ket]]:=CenterDot[CircleTimes[y],CircleTimes[z]] CircleTimes[x];
-CenterDot/:CenterDot[CircleTimes[x__Bra],CenterDot[CircleTimes[y__Ket],CircleTimes[z__Bra]]]:=CenterDot[CircleTimes[x],CircleTimes[y]] CircleTimes[z];*)
 (* Bring scalars in front *)
 CenterDot/:CenterDot[x___,Times[y_?countBraket,z__],t___]:=Times[y,CenterDot[x,z,t]]; 
 CenterDot/:CenterDot[x___,y_?countBraket ,z___]:=Times[y,CenterDot[x,z]];
@@ -140,7 +130,7 @@ internalBraketExpand[CircleTimes[z___,x_CenterDot,y__Ket,t___]]:=CircleTimes[z,C
 internalBraketExpand[CircleTimes[z___,x_CenterDot,y__Bra,t___]]:=CircleTimes[z,CenterDot[x[[1]],CircleTimes[x[[2]],y]],t];
 internalBraketExpand[CircleTimes[y__Ket,x_CenterDot]]:=CenterDot[CircleTimes[y,x[[1]]],x[[2]]]
 internalBraketExpand[CircleTimes[y__Bra,x_CenterDot]]:=CenterDot[x[[1]],CircleTimes[y,x[[2]]]]
-(* the function internalBraketExpand is called until the output doesn't change anymore *)
+(* The function internalBraketExpand is called until the output doesn't change anymore *)
 internalBraketExpand[x_?countBraket]:=x;
 BraketExpand[x_]:=
 FixedPoint[internalBraketExpand,x];
@@ -170,7 +160,7 @@ BraketSplit[Bra[x__]]:=(Bra[#]&/@List[x])/.List->CircleTimes;
 BraketSplit[x__Plus]:=BraketSplit[#]&/@x;
 BraketSplit[x__Times]:=BraketSplit[#]&/@x;BraketSplit[x__CenterDot]:=BraketSplit[#]&/@x;
 BraketSplit[x_?countBraket]:=x;
-(* Sometimes it is convenient to split kets ina specific place *)
+(* Sometimes it is convenient to split kets in a specific place *)
 BraketSplit[Ket[x__],n_Integer]:=CircleTimes[List[x][[1;;n+1]],List[x][[n+2;;Length[List[x]]]]]/.List->Ket;
 BraketSplit[Bra[x__],n_Integer]:=CircleTimes[List[x][[1;;n+1]],List[x][[n+2;;Length[List[x]]]]]/.List->Bra;
 BraketSplit[x__Plus,n_Integer]:=BraketSplit[#,n]&/@x;
