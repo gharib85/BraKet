@@ -100,13 +100,18 @@ CircleTimes/:CircleTimes[x_]:=x/;MemberQ[{Ket,Bra},Head[x]];
 (* ::Input::Initialization:: *)
 ClearAll[CenterDot]
 (* We assume that everything is written in terms of orthornormal basis *)
-(* Inner product between vectors *)
+(* Inner product between basis states - one tensor factor *)
 CenterDot/:Bra[x_]\[CenterDot]Ket[y_]:=If[x==y,1,0]/;SubsetQ[basisList,{x,y}];
+(* Inner product between basis states - many tensor factors *)
 CenterDot/:CenterDot[CircleTimes[x__Bra],CircleTimes[y__Ket]]:=CircleTimes@@MapThread[CenterDot[#1,#2]&,{List[x],List[y]}];
-(* Resolves inner product of exterior products *)
-CenterDot[x_CenterDot,y_CenterDot]:=CenterDot[x[[2]],y[[1]]]CenterDot[x[[1]],y[[2]]];
-CenterDot[x_CenterDot,y_]:=CenterDot[x[[2]],y]x[[1]]/;MemberQ[{CircleTimes,Ket},Head[y]];
-CenterDot[x_,y_CenterDot]:=CenterDot[x,y[[1]]]y[[2]]/;MemberQ[{CircleTimes,Bra},Head[x]];
+(* Product between operators and states - one tensor factor *)
+CenterDot/:CenterDot[CenterDot[x_Ket,y_Bra],z_Ket]:=CenterDot[y,z]x;
+CenterDot/:CenterDot[x_Bra,CenterDot[y_Ket,z_Bra]]:=CenterDot[x,y]z;
+CenterDot/:CenterDot[x_Bra,CenterDot[y_Ket,z_Bra],t_Ket]:=CenterDot[x,y]CenterDot[z,t]
+(* Product between operators and states - many tensors factors *)
+CenterDot/:CenterDot[CenterDot[CircleTimes[x__Ket],CircleTimes[y__Bra]],CircleTimes[z__Ket]]:=CenterDot[CircleTimes[y],CircleTimes[z]]CircleTimes[x];
+CenterDot/:CenterDot[CircleTimes[x__Bra],CenterDot[CircleTimes[y__Ket],CircleTimes[z__Bra]]]:=CenterDot[CircleTimes[x],CircleTimes[y]]CircleTimes[z];
+CenterDot/:CenterDot[CircleTimes[x__Bra],CenterDot[CircleTimes[y__Ket],CircleTimes[z__Bra]],CircleTimes[t__Ket]]:=CenterDot[CircleTimes[x],CircleTimes[y]]CenterDot[CircleTimes[z],CircleTimes[t]]
 (* Bring scalars in front *)
 CenterDot/:CenterDot[x___,Times[y_?countBraket,z__],t___]:=Times[y,CenterDot[x,z,t]]; 
 CenterDot/:CenterDot[x___,y_?countBraket ,z___]:=Times[y,CenterDot[x,z]];
